@@ -106,11 +106,7 @@ m1time &lt;- substr(as.POSIXct(sprintf(&quot;%04.0f&quot;, m1), format='%H%M'), 
 <p><em>1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)</em></p>
 <pre class="r"><code>missval &lt;- sum(!complete.cases(activity[-1]))</code></pre>
 <p>The total number of missing values in the dataset is 2303</p>
-<ul>
-<li><ol start="2" style="list-style-type: decimal">
-<li>Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.*</li>
-</ol></li>
-</ul>
+<p><em>2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</em></p>
 <p>The strategy being used for filling in all missing values will be to use the mean for that 5-minute interval that is missing a value.</p>
 <p><em>3. Create a new dataset that is equal to the original dataset but with the missing data filled in.</em></p>
 <pre class="r"><code>cactivity &lt;- activity

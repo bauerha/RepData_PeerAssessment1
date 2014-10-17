@@ -82,7 +82,7 @@ missval <- sum(!complete.cases(activity[-1]))
 ```
 The total number of missing values in the dataset is 2303
 
-* 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.*
+*2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.*
 
 The strategy being used for filling in all missing values will be to use the mean for that 5-minute interval that is missing a value.
 
