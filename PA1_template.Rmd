@@ -40,14 +40,17 @@ msteps <- activity[, mean(steps, na.rm=TRUE), by=interval]
 with(msteps, plot(interval, V1, 
                   type="l", 
                   main="Average Daily Activity Pattern",
-                  ylab="Average Number of Steps Taken"))
+                  ylab="Average Number of Steps Taken",
+                  xlab="5-Minute Interval"))
 ```
 
-2. Calculate and report the mean and median total number of steps taken per day.
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?.
 ```{r}
-m1 <- msteps[max(msteps$V1)]$interval
+max_steps = max(msteps$V1)
+m1 <- msteps[V1 == max_steps]$interval
+m1time <- substr(as.POSIXct(sprintf("%04.0f", m1), format='%H%M'), 12, 16)
 ```
-The 5-minute interval with the maiumun number of steps is `r m1`.
+The 5-minute interval with the maximun number of steps is `r m1` or `r m1time` (with a maximum steps of `r max_steps`).
 
 
 ## Imputing missing values
@@ -59,7 +62,7 @@ The total number of missing values in the dataset is `r missval`
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-The strategy for filling in all missing values will be to use themean for that 5-minute interval that is missing a value.
+The strategy being used for filling in all missing values will be to use the mean for that 5-minute interval that is missing a value.
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 ```{r}
@@ -73,15 +76,22 @@ summary(cactivity)
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 ```{r}
+tsteps <- activity[, sum(steps), by=date]
 ctsteps <- cactivity[, sum(steps), by=date]
+par(mfrow = c(1, 2), cex = 0.6)
+hist(tsteps$V1, 
+    main = "Total Number of Steps", 
+    xlab = "Total Steps Each Day")
 hist(ctsteps$V1, 
-    main = "Total Number of Steps Taken Each Day", 
-    xlab = "Total Steps")
+    main = "Total Number of Steps with Imputed Missing Values", 
+    xlab = "Total Steps Each Day")
 
+m1 <- format(mean(tsteps$V1, na.rm = TRUE), nsmall=2)
+m2 <- format(median(tsteps$V1, na.rm = TRUE), nsmall=2)
 cm1 <- format(mean(ctsteps$V1, na.rm = TRUE), nsmall=2)
 cm2 <- format(median(ctsteps$V1, na.rm = TRUE), nsmall=2)
 ```
-The mean is `r cm1` and the median is `r cm2`.  The values are similar to the values from the first part of the assignment.  The impact of imputing missing data on the estimates of the total daily number of steps appears to be minimal.
+The mean with imputed missing values is `r cm1` compared to `r m1`.  The median with missing values is `r cm2` compared with `r m2`.  The values are similar.  The impact of imputing missing data on the estimates of the total daily number of steps appears to be minimal.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -95,6 +105,15 @@ cactivity$weekend <- weekdays(as.Date(cactivity$date,"%Y-%m-%d")) %in% c('Sunday
 library(lattice)
 cactivity$wday <- ifelse(cactivity$weekend == FALSE, "Weekday", "Weekend")
 wmsteps <- cactivity[,list(avg = mean(steps)),by = list(interval,wday)]
+
+we_m <- mean(wmsteps[wday == "Weekend"]$avg, na.rm = TRUE)
+we_i <- wmsteps[avg == max(wmsteps[wday == "Weekend"]$avg)]$interval
+we_time <- substr(as.POSIXct(sprintf("%04.0f", we_i), format='%H%M'), 12, 16)
+
+wd_m <- mean(wmsteps[wday == "Weekday"]$avg, na.rm = TRUE)
+wd_i <- wmsteps[avg == max(wmsteps[wday == "Weekday"]$avg)]$interval
+wd_time <- substr(as.POSIXct(sprintf("%04.0f", wd_i), format='%H%M'), 12, 16)
+
 xyplot( avg ~ interval | wday, data = wmsteps, 
         layout = c(1,2), type="l", 
         ylab="Number of steps", 
@@ -102,3 +121,4 @@ xyplot( avg ~ interval | wday, data = wmsteps,
         main="Average Number of Steps Taken")
 ```
 
+There are differences in activity between weekend and weekday.  The charts show that there is more activity throughout the day during the weekend and the average number of steps is greater during the weekend (`r we_m`) than the weekday (`r wd_m`).  In addition, the maximum number of steps taken is later in the day for the weekend (`r we_i` or `r we_time`) versus the weekday (`r wd_i` or `r we_time`).
